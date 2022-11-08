@@ -18,12 +18,12 @@ class StudentPopUp {
     // TextEditingController grade = TextEditingController();
     TextEditingController note = TextEditingController();
     bool? isRiot = studentModel!.isriot == 1 ? true : false;
+
     return await showDialog(
         context: superContext,
         builder: (_) {
           return BlocProvider.value(
-            value: BlocProvider.of(superContext),
-            //value: superContext.read<StudentsBloc>(),
+            value: BlocProvider.of<StudentsBloc>(superContext),
             child: BlocConsumer<StudentsBloc, StudentsStates>(
               listener: (context, state) {
                 if (state is StudentErrorState) {
@@ -100,9 +100,9 @@ class StudentPopUp {
                                           studentGrade: 0,
                                           studentNote: note.text,
                                           isriot: 0);
-                                      StudentsBloc()
-                                          .add(AddStudentEvent(newStudent));
-                                      StudentsBloc().added = true;
+                                      BlocProvider.of<StudentsBloc>(context)
+                                        ..add(AddStudentEvent(newStudent))
+                                        ..added = true;
                                       Navigator.pop(context);
                                     }
                                   : () {
@@ -120,12 +120,11 @@ class StudentPopUp {
                                               studentWeekGrade:
                                                   studentModel.studentWeekGrade,
                                               isriot: isRiot == true ? 1 : 0);
-                                      setState(() {
-                                        StudentsBloc().add(
-                                            UpdateStudentEvent(updatedStudent));
-                                        StudentsBloc().add(GetStudentsEvent());
-                                        Navigator.pop(context);
-                                      });
+                                      BlocProvider.of<StudentsBloc>(context)
+                                        ..add(
+                                            UpdateStudentEvent(updatedStudent))
+                                        ..add(GetStudentsEvent());
+                                      Navigator.pop(context);
                                     })
                         ],
                       ),

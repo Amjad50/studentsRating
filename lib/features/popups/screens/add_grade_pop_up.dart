@@ -11,14 +11,13 @@ import 'package:students_rating/features/home/application/HomeBloc/students_stat
 import 'package:students_rating/features/home/domain/entites/student.dart';
 
 class AddGradePopUp {
-  static Future<dynamic> show(context, Student student) async {
+  static Future<dynamic> show(superContext, Student student) async {
     TextEditingController gradeController = TextEditingController();
-
     return await showDialog(
-        context: context,
+        context: superContext,
         builder: (context) {
-          return BlocProvider(
-            create: (context) => StudentsBloc(),
+          return BlocProvider.value(
+            value: BlocProvider.of<StudentsBloc>(superContext),
             child: BlocConsumer<StudentsBloc, StudentsStates>(
               listener: (context, state) {
                 if (state is StudentErrorState) {
@@ -53,13 +52,14 @@ class AddGradePopUp {
                                 controller: gradeController),
                           ),
                           CustomButton("حفظ", () {
-                            StudentsBloc().add(ClacWeekGradeEvent(
-                                student.studentId!,
-                                double.parse(gradeController.text),
-                                student.studentWeekGrade == null
-                                    ? 0
-                                    : student.studentWeekGrade!));
-                           
+                            BlocProvider.of<StudentsBloc>(context)
+                              ..add(ClacWeekGradeEvent(
+                                  student.studentId!,
+                                  double.parse(gradeController.text),
+                                  student.studentWeekGrade == null
+                                      ? 0
+                                      : student.studentWeekGrade!))
+                              ..add(GetStudentsEvent());
                             Navigator.pop(context, true);
                           })
                         ],
